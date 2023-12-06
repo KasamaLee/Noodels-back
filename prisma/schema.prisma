@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  PENDING
+  COMPLETEED
+  FAILED
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  userName String
+  email    String    @unique
+  password String
+  mobile   String
+  address  String?
+  role     Role
+  Cart     Cart[]
+  Order    Order[]
+  Payment  Payment[]
+}
+
+model Country {
+  id      Int       @id @default(autoincrement())
+  name    String
+  Product Product[]
+}
+
+model Product {
+  id            Int         @id @default(autoincrement())
+  countryId     Int?
+  Country       Country?    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  name          String
+  desc          String?     @db.LongText
+  price         Int
+  imageUrl      String?
+  stockQuantity Int?        @default(10)
+  CartItem      CartItem[]
+  OrderItem     OrderItem[]
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cartId    Int
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  quantity  Int
+  price     Int
+}
+
+model Cart {
+  id       Int        @id @default(autoincrement())
+  userId   Int
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updateAt DateTime   @default(now())
+  CartItem CartItem[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  quantity  Int
+  price     Int
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  userId     Int
+  user       User        @relation(fields: [userId], references: [id])
+  paymentId  Int
+  payment    Payment     @relation(fields: [paymentId], references: [id])
+  orderDate  DateTime    @default(now())
+  totalPrice Int
+  OrderItem  OrderItem[]
+}
+
+model Payment {
+  id      Int     @id @default(autoincrement())
+  userId  Int
+  user    User    @relation(fields: [userId], references: [id])
+  type    Status
+  slipUrl String
+  Order   Order[]
+}
