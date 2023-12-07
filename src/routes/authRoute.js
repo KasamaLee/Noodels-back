@@ -7,6 +7,7 @@ const authController = require('../controllers/auth-controller')
 const authenticateMiddleware = require('../middlewares/authenticate')
 
 router.post('/register', authController.register)
+console.log('---------')
 router.post('/login', authController.login)
 router.get('/me', authenticateMiddleware, authController.getMe)
 
