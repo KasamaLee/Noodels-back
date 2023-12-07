@@ -3,8 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
+const authRoute = require('./routes/authRoute')
 const productRoute = require('./routes/productRoute')
 const categoryRoute = require('./routes/categoryRoute')
+const cartRoute = require('./routes/cartRoute')
 
 // APP
 const app = express();
@@ -15,8 +17,10 @@ app.use(express.urlencoded({ extended: false }));
 
 
 // ROUTE
+app.use('/auth', authRoute)
 app.use('/product', productRoute)
 app.use('/category', categoryRoute)
+app.use('/cart', cartRoute)
 
 // ERROR
 const errorMiddleware = require('./middlewares/error')
