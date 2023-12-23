@@ -7,8 +7,8 @@ const authController = require('../controllers/auth-controller')
 const authenticateMiddleware = require('../middlewares/authenticate')
 
 router.post('/register', authController.register)
-console.log('---------')
 router.post('/login', authController.login)
+router.post('/googleLogin', authController.googleLogin)
 router.get('/me', authenticateMiddleware, authController.getMe)
 
 module.exports = router;

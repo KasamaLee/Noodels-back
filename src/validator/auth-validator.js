@@ -22,3 +22,9 @@ exports.loginSchema = Joi.object({
         }),
     password: Joi.string().required()
 });
+
+exports.googleLoginSchema = Joi.object({
+    userName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    googleId: Joi.string().required(),
+})

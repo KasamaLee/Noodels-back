@@ -7,6 +7,7 @@ const authRoute = require('./routes/authRoute')
 const productRoute = require('./routes/productRoute')
 const categoryRoute = require('./routes/categoryRoute')
 const cartRoute = require('./routes/cartRoute')
+const orderRoute = require('./routes/orderRoute')
 
 // APP
 const app = express();
@@ -21,6 +22,7 @@ app.use('/auth', authRoute)
 app.use('/product', productRoute)
 app.use('/category', categoryRoute)
 app.use('/cart', cartRoute)
+app.use('/order', orderRoute)
 
 // ERROR
 const errorMiddleware = require('./middlewares/error')

@@ -1,5 +1,5 @@
 const prisma = require("../models/prisma");
-const { registerSchema, loginSchema } = require('../validator/auth-validator')
+const { registerSchema, loginSchema, googleLoginSchema } = require('../validator/auth-validator')
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
@@ -80,7 +80,50 @@ exports.login = async (req, res, next) => {
 
     } catch (err) {
         console.log(err)
-        next()
+        next(err)
+    }
+}
+
+exports.googleLogin = async (req, res, next) => {
+    try {
+        const reqBody = req.body;
+        const { error, value } = googleLoginSchema.validate(reqBody);
+
+        if (error) {
+            return res.json({ msg: "google login failed" })
+        }
+
+        const existGoogleUser = await prisma.user.findFirst({
+            where: {
+                googleId: value.googleId
+            }
+        })
+
+        if (existGoogleUser) {
+            const payload = {
+                userId: existGoogleUser.id,
+                role: existGoogleUser.role
+            }
+            const accessToken = generateToken(payload);
+            const user = existGoogleUser;
+            return res.status(200).json({ user, accessToken })
+        }
+
+        value.role = 'USER';
+        const googleUser = await prisma.user.create({
+            data: value
+        })
+
+        const payload = {
+            userId: googleUser.id,
+            role: googleUser.role
+        }
+        const accessToken = generateToken(payload);
+        res.status(200).json({ googleUser, accessToken })
+
+    } catch (err) {
+        console.log(err)
+        next(err)
     }
 }
 

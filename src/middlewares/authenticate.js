@@ -37,7 +37,7 @@ module.exports = async (req, res, next) => {
         // middleware นี้จะแนบข้อมูล user ไปกับ request 
         req.user = user;
 
-        // console.log(req.user)
+        console.log("req.user ==> ",req.user)
         // {
         //     id: 1,
         //     userName: 'John',
