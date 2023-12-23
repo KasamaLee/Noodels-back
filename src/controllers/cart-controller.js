@@ -53,15 +53,6 @@ exports.addToCart = async (req, res, next) => {
     }
 }
 
-exports.updatedCart = async (req, res, next) => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-        next(err)
-    }
-}
-
 exports.deleteCart = async (req, res, next) => {
     try {
         const { id } = req.params;
