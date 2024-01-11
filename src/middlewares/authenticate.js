@@ -6,7 +6,7 @@ module.exports = async (req, res, next) => {
 
         // ตรวจ Header
         const authorization = req.headers.authorization;
-        console.log(authorization)
+        // console.log(authorization)
         if (!authorization || !authorization.startsWith('Bearer ')) {
             throw new Error('unauthenticated')
         }
@@ -37,7 +37,8 @@ module.exports = async (req, res, next) => {
         // middleware นี้จะแนบข้อมูล user ไปกับ request 
         req.user = user;
 
-        console.log("req.user ==> ",req.user)
+        // console.log("req.user ==> ",req.user)
+
         // {
         //     id: 1,
         //     userName: 'John',

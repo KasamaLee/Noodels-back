@@ -21,6 +21,11 @@ enum Status {
   FAILED
 }
 
+enum PaymentType {
+  QR_CODE
+  CREDIT_CARD
+}
+
 model User {
   id       Int       @id @default(autoincrement())
   userName String
@@ -69,7 +74,7 @@ model Cart {
   id       Int        @id @default(autoincrement())
   userId   Int
   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  updateAt DateTime   @default(now())
+  createAt DateTime   @default(now())
   CartItem CartItem[]
 }
 
@@ -95,10 +100,11 @@ model Order {
 }
 
 model Payment {
-  id      Int     @id @default(autoincrement())
+  id      Int         @id @default(autoincrement())
   userId  Int
-  user    User    @relation(fields: [userId], references: [id])
-  type    Status
+  user    User        @relation(fields: [userId], references: [id])
+  type    PaymentType
+  status  Status
   slipUrl String
   Order   Order[]
 }

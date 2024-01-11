@@ -53,6 +53,30 @@ exports.addToCart = async (req, res, next) => {
     }
 }
 
+exports.updateQuantity = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { quantity, price } = req.body
+        console.log(quantity, price)
+
+        const updatedCart = await prisma.cartItem.update({
+            where: {
+                id: +id
+            },
+            data: {
+                quantity: +quantity,
+                price: +price
+            }
+        })
+
+        return res.status(200).json({updatedCart})
+
+    } catch (err) {
+        console.log(err)
+        next(err)
+    }
+}
+
 exports.deleteCart = async (req, res, next) => {
     try {
         const { id } = req.params;

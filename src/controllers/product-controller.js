@@ -20,7 +20,7 @@ exports.addProduct = async (req, res, next) => {
 
         res.status(200).json({ product })
     } catch (err) {
-        console.error(err); // Log the error for server-side inspection.
+        console.log(err); // Log the error for server-side inspection.
         next(err)
     }
 }
