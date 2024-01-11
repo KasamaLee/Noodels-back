@@ -97,7 +97,6 @@ exports.deleteCart = async (req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
     try {
-
         const cart = await prisma.cart.findFirst({
             where: {
                 userId: req.user.id

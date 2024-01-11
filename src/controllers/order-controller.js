@@ -62,14 +62,25 @@ exports.createOrder = async (req, res, next) => {
 
 exports.getOrder = async (req, res, next) => {
     try {
-        const order = await prisma.order.findFirst({
+        const order = await prisma.order.findMany({
             where: {
                 userId: req.user.id
             },
             include: {
-                OrderItem: true
+                OrderItem: {
+                    include: {
+                        product: true
+                    }
+                },
+                payment: {
+                    select: {
+                        status: true
+                    }
+                }
             }
         })
+
+        res.status(200).json({ order })
 
     } catch (err) {
         console.log(err)
