@@ -1,5 +1,5 @@
 const prisma = require("../models/prisma");
-const { registerSchema, loginSchema, googleLoginSchema } = require('../validator/auth-validator')
+const { registerSchema, loginSchema, googleLoginSchema, profileSchema, passwordSchema } = require('../validator/auth-validator')
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
@@ -84,6 +84,70 @@ exports.login = async (req, res, next) => {
     }
 }
 
+exports.updateProfile = async (req, res, next) => {
+    try {
+
+        const body = req.body
+        const { error, value } = profileSchema.validate(body);
+
+        if (error) {
+            return res.json({ error })
+        }
+
+        const user = await prisma.user.update({
+            where: {
+                id: req.user.id
+            },
+            data: value
+        });
+
+        // console.log(user)
+        res.status(200).json({ user })
+    } catch (err) {
+        console.log(err)
+        next(err)
+    }
+}
+
+exports.updatePassword = async (req, res, next) => {
+    try {
+
+        const body = req.body
+        const { error, value } = passwordSchema.validate(body);
+        // console.log(body)
+
+        if (error) {
+            return res.json({ error })
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.id }
+        })
+
+        const isMatched = await bcrypt.compare(value.oldPassword, user.password)
+
+        if (!isMatched) {
+            // throw new Error('not matched')
+            return res.status(500).json({ msg: 'the old password does not correct' })
+        }
+
+        const hashedPassword = await bcrypt.hash(value.newPassword, 10);
+        const updatedUserPassword = await prisma.user.update({
+            where: {
+                id: req.user.id
+            },
+            data: {
+                password: hashedPassword
+            }
+        });
+        res.status(200).json({ updatedUserPassword })
+
+    } catch (err) {
+        console.log(err)
+        next(err)
+    }
+}
+
 exports.googleLogin = async (req, res, next) => {
     try {
         const reqBody = req.body;
@@ -99,6 +163,7 @@ exports.googleLogin = async (req, res, next) => {
             }
         })
 
+        // Register
         if (existGoogleUser) {
             const payload = {
                 userId: existGoogleUser.id,
@@ -106,13 +171,18 @@ exports.googleLogin = async (req, res, next) => {
             }
             const accessToken = generateToken(payload);
             const user = existGoogleUser;
+            delete user.googleId
+            delete user.password
             return res.status(200).json({ user, accessToken })
         }
 
+        // Login
         value.role = 'USER';
         const googleUser = await prisma.user.create({
             data: value
         })
+        delete googleUser.googleId
+        delete googleUser.password
 
         const payload = {
             userId: googleUser.id,
