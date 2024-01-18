@@ -57,7 +57,7 @@ exports.updateQuantity = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { quantity, price } = req.body
-        console.log(quantity, price)
+        // console.log(quantity, price)
 
         const updatedCart = await prisma.cartItem.update({
             where: {

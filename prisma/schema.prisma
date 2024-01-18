@@ -15,12 +15,6 @@ enum Role {
   ADMIN
 }
 
-enum Status {
-  PENDING
-  COMPLETEED
-  FAILED
-}
-
 enum PaymentType {
   QR_CODE
   CREDIT_CARD
@@ -104,7 +98,7 @@ model Payment {
   userId  Int
   user    User        @relation(fields: [userId], references: [id])
   type    PaymentType
-  status  Status
+  status  Boolean
   slipUrl String
   Order   Order[]
 }

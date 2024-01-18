@@ -18,7 +18,7 @@ exports.createOrder = async (req, res, next) => {
             data: {
                 userId: req.user.id,
                 type: paymentType,
-                status: 'PENDING',
+                status: false,
                 slipUrl: cloudImageUrl
             }
         })
@@ -81,6 +81,49 @@ exports.getOrder = async (req, res, next) => {
         })
 
         res.status(200).json({ order })
+
+    } catch (err) {
+        console.log(err)
+        next(err)
+    }
+}
+
+exports.getAllOrders = async (req, res, next) => {
+    try {
+        const order = await prisma.order.findMany({
+            include: {
+                OrderItem: {
+                    include: {
+                        product: true
+                    }
+                },
+                payment: true,
+                user: true
+            }
+        })
+
+        res.status(200).json({ order })
+
+    } catch (err) {
+        console.log(err)
+        next(err)
+    }
+}
+
+exports.updateStatus = async (req, res, next) => {
+    try {
+        const { paymentId, status } = req.body
+
+        const updatedOrder = await prisma.payment.update({
+            where: {
+                id: paymentId
+            },
+            data: {
+                status: status
+            }
+        })
+
+        res.status(200).json({ updatedOrder })
 
     } catch (err) {
         console.log(err)

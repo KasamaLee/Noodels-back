@@ -37,12 +37,13 @@ exports.getProduct = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { name, price, stockQuantity } = req.body;
+        const { name, price, stockQuantity, categoryId } = req.body;
 
         const newProductData = {
             name: name,
             price: +price,
-            stockQuantity: +stockQuantity
+            stockQuantity: +stockQuantity,
+            categoryId: +categoryId || null
         }
 
         if (req.file) {
@@ -58,6 +59,22 @@ exports.updateProduct = async (req, res, next) => {
         })
 
         res.status(200).json({ updatedProduct })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.deleteProduct = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const deletedProduct = await prisma.product.delete({
+            where: {
+                id: +id
+            }
+        })
+        res.status(200).json({ deletedProduct })
+
     } catch (err) {
         next(err)
     }
