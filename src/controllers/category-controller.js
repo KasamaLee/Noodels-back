@@ -2,11 +2,11 @@ const prisma = require('../models/prisma')
 
 exports.addCategory = async (req, res, next) => {
     try {
-        const { name } = req.body;
+        const { categoryName } = req.body;
 
         const category = await prisma.country.create({
             data: {
-                name: name
+                name: categoryName
             }
         });
 
@@ -23,6 +23,26 @@ exports.getCategory = async (req, res, next) => {
         const allCategory = await prisma.country.findMany()
 
         res.status(200).json({ allCategory })
+    } catch (err) {
+        console.log(err)
+        next(err)
+    }
+}
+
+exports.updateCategory = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { categoryName } = req.body;
+
+        const updatedCategory = await prisma.country.update({
+            where: {
+                id: +id
+            },
+            data: {
+                name: categoryName
+            }
+        })
+        res.status(200).json({ updatedCategory })
     } catch (err) {
         console.log(err)
         next(err)
