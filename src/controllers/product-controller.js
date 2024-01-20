@@ -3,19 +3,24 @@ const { upload } = require('../utils/cloudinary-service')
 
 exports.addProduct = async (req, res, next) => {
     try {
-        const { name, price, stockQuantity } = req.body;
+        const { name, price, stockQuantity, desc, categoryId } = req.body;
 
-        // Upload Image File to Cloudinary
-        let cloudinaryImageUrl = await upload(req.file.path)
-        console.log(req.file.path)
+        const newProductData = {
+            name: name,
+            price: +price,
+            stockQuantity: +stockQuantity,
+            desc: desc || null,
+            countryId: +categoryId || null
+        }
+
+        if (req.file) {
+            let cloudinaryImageUrl = await upload(req.file.path)
+            newProductData.imageUrl = cloudinaryImageUrl;
+        }
+        console.log(newProductData)
 
         const product = await prisma.product.create({
-            data: {
-                name: name,
-                price: +price,
-                stockQuantity: +stockQuantity,
-                imageUrl: cloudinaryImageUrl
-            }
+            data: newProductData
         });
 
         res.status(200).json({ product })
@@ -37,19 +42,21 @@ exports.getProduct = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { name, price, stockQuantity, categoryId } = req.body;
+        const { name, price, stockQuantity, desc, categoryId } = req.body;
 
         const newProductData = {
             name: name,
             price: +price,
             stockQuantity: +stockQuantity,
-            categoryId: +categoryId || null
+            desc: desc || null,
+            countryId: +categoryId || null
         }
 
         if (req.file) {
             let cloudinaryImageUrl = await upload(req.file.path)
             newProductData.imageUrl = cloudinaryImageUrl;
         }
+        // console.log(newProductData)
 
         const updatedProduct = await prisma.product.update({
             where: {

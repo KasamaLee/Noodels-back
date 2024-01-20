@@ -21,7 +21,6 @@ exports.addCategory = async (req, res, next) => {
 exports.getCategory = async (req, res, next) => {
     try {
         const allCategory = await prisma.country.findMany()
-
         res.status(200).json({ allCategory })
     } catch (err) {
         console.log(err)
